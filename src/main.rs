@@ -30,6 +30,8 @@ fn main() {
     let mut shapes: Vec<RawShape> = Vec::new();
 
     let mut current_shape_id: Option<String> = None;
+    
+    let mut wtr = csv::Writer::from_path(&output_file_path).unwrap();
 
     for result in rdr.deserialize() {
         if let Ok(record) = result {
@@ -43,12 +45,10 @@ fn main() {
 
             if current_shape_id.as_ref() != Some(&record.shape_id) {
                 // Write the previous shape to file
-                let mut wtr = csv::Writer::from_path(&output_file_path).unwrap();
 
                 for shape in &shapes {
                     wtr.serialize(shape).unwrap();
                 }
-                wtr.flush().unwrap();
 
                 // Clear the shapes vector and update the current shape id
                 shapes.clear();
@@ -74,12 +74,10 @@ fn main() {
 
     // Write the last shape to file after the loop
 
-    let mut wtr = csv::Writer::from_path(&output_file_path).unwrap();
     for shape in &shapes {
         wtr.serialize(shape).unwrap();
     }
     shapes.clear();
-    wtr.flush().unwrap();
 
     // rename output back to input
 
