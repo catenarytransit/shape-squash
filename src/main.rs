@@ -5,11 +5,11 @@ use std::io;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct RawShape {
-    pub id: String,
-    pub latitude: f64,
-    pub longitude: f64,
-    pub sequence: usize,
-    pub dist_traveled: Option<f32>,
+    pub shape_id: String,
+    pub shape_pt_lat: f64,
+    pub shape_pt_lon: f64,
+    pub shape_pt_sequence: usize,
+    pub shape_dist_traveled: Option<f32>,
 }
 
 fn main() {
@@ -36,12 +36,12 @@ fn main() {
             let record: RawShape = record;
 
             if current_shape_id.as_ref().is_none() {
-                current_shape_id = Some(record.id.clone());
+                current_shape_id = Some(record.shape_id.clone());
             }
 
             //if the shape id is different, write the previous shape to file
 
-            if current_shape_id.as_ref() != Some(&record.id) {
+            if current_shape_id.as_ref() != Some(&record.shape_id) {
                 // Write the previous shape to file
                 let mut wtr = csv::Writer::from_path(&output_file_path).unwrap();
 
@@ -52,7 +52,7 @@ fn main() {
 
                 // Clear the shapes vector and update the current shape id
                 shapes.clear();
-                current_shape_id = Some(record.id.clone());
+                current_shape_id = Some(record.shape_id.clone());
             }
 
             // If the shape id is the same, just push the record to the shapes vector
@@ -61,7 +61,7 @@ fn main() {
             } else {
                 let last = shapes.last().unwrap();
 
-                if last.latitude == record.latitude && last.longitude == record.longitude {
+                if last.shape_pt_lat == record.shape_pt_lat && last.shape_pt_lon == record.shape_pt_lon {
                     //do nothing
                 } else {
                     shapes.push(record);
