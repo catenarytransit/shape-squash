@@ -12,6 +12,25 @@ struct RawShape {
     pub shape_dist_traveled: Option<f32>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct RawShapeOut {
+    pub shape_id: String,
+    pub shape_pt_lat: f64,
+    pub shape_pt_lon: f64,
+    pub shape_pt_sequence: usize
+}
+
+impl From<RawShape> for RawShapeOut {
+    fn from(raw_shape: RawShape) -> Self {
+        RawShapeOut {
+            shape_id: raw_shape.shape_id,
+            shape_pt_lat: raw_shape.shape_pt_lat,
+            shape_pt_lon: raw_shape.shape_pt_lon,
+            shape_pt_sequence: raw_shape.shape_pt_sequence
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -46,7 +65,8 @@ fn main() {
             if current_shape_id.as_ref() != Some(&record.shape_id) {
                 // Write the previous shape to file
 
-                for shape in &shapes {
+                for shape in shapes {
+                    let shape: RawShapeOut = shape.into();
                     wtr.serialize(shape).unwrap();
                 }
 
