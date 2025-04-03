@@ -46,7 +46,7 @@ fn main() {
 
     let output_file_path = format!("{}.temp", file_path);
 
-    let mut shapes: Vec<RawShape> = Vec::new();
+    let mut shapes: Vec<RawShapeOut> = Vec::new();
 
     let mut current_shape_id: Option<String> = None;
     
@@ -54,7 +54,7 @@ fn main() {
 
     for result in rdr.deserialize() {
         if let Ok(record) = result {
-            let record: RawShape = record;
+            let record: RawShapeOut = record;
 
             if current_shape_id.as_ref().is_none() {
                 current_shape_id = Some(record.shape_id.clone());
@@ -65,8 +65,7 @@ fn main() {
             if current_shape_id.as_ref() != Some(&record.shape_id) {
                 // Write the previous shape to file
 
-                for shape in shapes {
-                    let shape: RawShapeOut = shape.into();
+                for shape in &shapes {
                     wtr.serialize(shape).unwrap();
                 }
 
